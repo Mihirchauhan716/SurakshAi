@@ -3,3 +3,4 @@ let secondname =prompt("last ka nam daal be")
 console.log(`hello $ {firstname } $ {lastname}`)
 //day 2 javascript
 // day 3 javascript
+//day 4 javascript

@@ -1,17 +1,7 @@
-
-//day 2 javascript
-// day 3 javascript
-//day 4 og("Hospital notified!")
-
-
-
-function handleEmergency(location) {
-  console.log(`Emergency detected at ${location}!`)
-  console.log("Finding nearest ambulance...")
-  console.log("Ambulance dispatched!")
+function calculateETA(distance) {
+  let eta = distance / 60
+  return eta
 }
 
-// call it with different locations
-handleEmergency("Mumbai Highway")
-handleEmergency("Delhi Metro")
-handleEmergency("Pune Station")
+let time = calculateETA(30)
+console.log(`Ambulance arrives in ${time} minutes`)

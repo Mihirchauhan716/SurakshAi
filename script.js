@@ -1,7 +1,5 @@
-function calculateETA(distance) {
-  let eta = distance / 60
-  return eta
-}
+let button = document.getElementById("sosButton")
 
-let time = calculateETA(30)
-console.log(`Ambulance arrives in ${time} minutes`)
+button.addEventListener("click", function() {
+  alert("Emergency detected! Dispatching ambulance...")
+})

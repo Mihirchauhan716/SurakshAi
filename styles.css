@@ -402,3 +402,12 @@ footer p {
   padding: 40px 30px;
   transition: border-color 0.3s, transform 0.3s;
 }
+.hero-buttons {
+    position: relative;
+    z-index: 10;
+}
+
+.hero-primary {
+    position: relative;
+    z-index: 20;
+}

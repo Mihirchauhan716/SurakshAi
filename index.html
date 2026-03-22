@@ -5,136 +5,180 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-  <body>
+<body>
 
-    <!-- NAVBAR -->
-    <nav>
-      <h1 id="appTitle">SurakshAI</h1>
-      <div>
-        <a href="#">Home</a>
-        <a href="#">How It Works</a>
-        <a href="#">Features</a>
-        <a href="#">Contact</a>
-      </div>
-    </nav>
-
-    <!-- HERO -->
-   <section class="hero">
-
-  <!-- ANIMATED CIRCLES -->
-  <div class="circle circle-1"></div>
-  <div class="circle circle-2"></div>
-  <div class="circle circle-3"></div>
-  <div class="circle circle-4"></div>
-
-  <!-- HERO CONTENT -->
-  <div class="hero-badge">AI Powered Safety System</div>
-  <h2>Every Second<br><span>Saves A Life</span></h2>
-  <p>SurakshAI detects accidents automatically, dispatches help instantly, and predicts dangers before they happen — without pressing a single button.</p>
-  <div class="hero-buttons">
-    <button id="sosButton" class="hero-primary">Download App</button>
-    <button class="hero-secondary">Watch Demo</button>
+  <!-- EMERGENCY BANNER -->
+  <div id="emergencyBanner">
+    Emergency Detected — Dispatching Ambulance
   </div>
 
-</section>
+  <!-- DEMO OVERLAY -->
+  <div id="demoOverlay">
+    <div id="demoBox">
 
-    <!-- ALARM STATS -->
-    <section class="alarm-section">
-      <h2>The Reality Of India's Roads</h2>
-      <div class="alarm-grid">
-        <div class="alarm-card">
-          <span class="number">1</span>
-          <span class="label">Death Every</span>
-          <p class="description">4 minutes on Indian roads due to accidents</p>
+      <div id="demoStep1" class="demo-step">
+        <h2>ACCIDENT DETECTED</h2>
+        <p>Impact force detected via accelerometer</p>
+        <p>Location: Madhya Marg, Sector 11, Chandigarh — 30.7605° N, 76.7762° E</p>
+      </div>
+
+      <div id="demoStep2" class="demo-step">
+        <h2>FINDING NEAREST AMBULANCE</h2>
+        <div id="fakeMap">
+          <div id="locationPin">YOU</div>
+          <div id="ambulancePin">AMB</div>
         </div>
-        <div class="alarm-card">
-          <span class="number">18min</span>
-          <span class="label">Average Wait</span>
-          <p class="description">For an ambulance to arrive in Indian cities</p>
-        </div>
-        <div class="alarm-card">
-          <span class="number">1.5L</span>
-          <span class="label">Deaths/Year</span>
-          <p class="description">Indians die annually in road accidents</p>
-        </div>
-        <div class="alarm-card">
-          <span class="number">&lt;3s</span>
-          <span class="label">SurakshAI</span>
-          <p class="description">Detects emergency and dispatches help automatically</p>
+        <p id="etaText">Calculating ETA...</p>
+      </div>
+
+      <div id="demoStep3" class="demo-step">
+        <h2>HOSPITAL NOTIFIED</h2>
+        <div id="hospitalCard">
+          <p>PGIMER — Sector 12, Madhya Marg, Chandigarh</p>
+          <p>1.2 km away</p>
+        
+          <p>Blood Type: O+ Available</p>
         </div>
       </div>
-    </section>
 
-    <!-- HOW IT WORKS -->
-    <section class="section">
-      <span class="section-label">The Process</span>
-      <h2>How SurakshAI Works</h2>
-      <div class="steps-grid">
-        <div class="step-card">
-          <span class="step-number">01</span>
-          <h3>Silent Monitoring</h3>
-          <p>SurakshAI runs silently in the background, monitoring your movement, speed and phone sensors 24/7</p>
-        </div>
-        <div class="step-card">
-          <span class="step-number">02</span>
-          <h3>Instant Detection</h3>
-          <p>AI detects accidents via accelerometer, gyroscope and motion patterns — no button press needed</p>
-        </div>
-        <div class="step-card">
-          <span class="step-number">03</span>
-          <h3>Auto Dispatch</h3>
-          <p>Nearest ambulance dispatched, best hospital notified, police alerted — all within 3 seconds</p>
-        </div>
-        <div class="step-card">
-          <span class="step-number">04</span>
-          <h3>Family Updated</h3>
-          <p>Your family receives live location, hospital details and real time status updates instantly</p>
+      <div id="demoStep4" class="demo-step">
+        <h2>FAMILY ALERTED</h2>
+        <div id="notification">
+          <p>SMS Sent to Emergency Contact</p>
+          <p>Live location shared</p>
         </div>
       </div>
-    </section>
 
-    <!-- FEATURES -->
-     <!-- FEATURES -->
-<section class="section">
-  <span class="section-label">Capabilities</span>
-  <h2>What SurakshAI Does</h2>
-  <div class="features-grid">
-    <div class="feature-card">
-      <h3>Auto Accident Detection</h3>
-      <p>Detects crashes via phone sensors automatically without any user input</p>
+      <div id="demoStep5" class="demo-step">
+        <h2>RESPONSE TIME</h2>
+        <p id="responseTime">8 seconds</p>
+        <p>Ambulance arriving in 3 minutes</p>
+      </div>
+
     </div>
-    <div class="feature-card">
-      <h3>Silent SOS</h3>
-      <p>Shake your phone 3 times to trigger silent SOS during crimes or assaults</p>
-    </div>
-    <div class="feature-card">
-      <h3>AI Danger Prediction</h3>
-      <p>Predicts dangerous road zones before you reach them using real accident data</p>
-    </div>
-    <div class="feature-card">
-      <h3>Live Tracking</h3>
-      <p>Real time ambulance location shared with family from dispatch to hospital</p>
-    </div>
-    <div class="feature-card">
-      <h3>Hospital Pre-Alert</h3>
-      <p>Hospital notified with patient details before ambulance even arrives</p>
-    </div>
-    <div class="feature-card">
-      <h3>City Safety Dashboard</h3>
-      <p>Authorities monitor accident hotspots and deploy resources proactively</p>
-    </div>
-  
   </div>
-</section>
 
-    <!-- FOOTER -->
-    <footer>
-      <h3>Suraksh<span>AI</span></h3>
-      <p>Protecting every Indian, on every road, every single day.</p>
-      <p>contact@suraksh.ai</p>
-    </footer>
+  <!-- NAVBAR -->
+  <nav>
+    <h1 id="appTitle">SurakshAI</h1>
+    <div>
+      <a href="#">Home</a>
+      <a href="#">How It Works</a>
+      <a href="#">Features</a>
+      <a href="#">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+    <div class="circle circle-4"></div>
+
+    <div class="hero-badge">AI Powered Safety System</div>
+    <h2>Every Second<br><span>Saves A Life</span></h2>
+    <p>SurakshAI detects accidents automatically, dispatches help instantly, and predicts dangers before they happen — without pressing a single button.</p>
+    <div class="hero-buttons">
+      <button class="hero-primary">Download App</button>
+      <button id="demoButton" class="hero-secondary">Watch Demo</button>
+    </div>
+  </section>
+
+  <!-- ALARM STATS -->
+  <section class="alarm-section">
+    <h2>The Reality Of India's Roads</h2>
+    <div class="alarm-grid">
+      <div class="alarm-card">
+        <span class="number">1</span>
+        <span class="label">Death Every</span>
+        <p class="description">4 minutes on Indian roads due to accidents</p>
+      </div>
+      <div class="alarm-card">
+        <span class="number">18min</span>
+        <span class="label">Average Wait</span>
+        <p class="description">For an ambulance to arrive in Indian cities</p>
+      </div>
+      <div class="alarm-card">
+        <span class="number">1.5L</span>
+        <span class="label">Deaths/Year</span>
+        <p class="description">Indians die annually in road accidents</p>
+      </div>
+      <div class="alarm-card">
+        <span class="number">&lt;3s</span>
+        <span class="label">SurakshAI</span>
+        <p class="description">Detects emergency and dispatches help automatically</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section">
+    <span class="section-label">The Process</span>
+    <h2>How SurakshAI Works</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <span class="step-number">01</span>
+        <h3>Silent Monitoring</h3>
+        <p>SurakshAI runs silently in the background, monitoring your movement, speed and phone sensors 24/7</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">02</span>
+        <h3>Instant Detection</h3>
+        <p>AI detects accidents via accelerometer, gyroscope and motion patterns — no button press needed</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">03</span>
+        <h3>Auto Dispatch</h3>
+        <p>Nearest ambulance dispatched, best hospital notified, police alerted — all within 3 seconds</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">04</span>
+        <h3>Family Updated</h3>
+        <p>Your family receives live location, hospital details and real time status updates instantly</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <span class="section-label">Capabilities</span>
+    <h2>What SurakshAI Does</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Auto Accident Detection</h3>
+        <p>Detects crashes via phone sensors automatically without any user input</p>
+      </div>
+      <div class="feature-card">
+        <h3>Silent SOS</h3>
+        <p>Shake your phone 3 times to trigger silent SOS during crimes or assaults</p>
+      </div>
+      <div class="feature-card">
+        <h3>AI Danger Prediction</h3>
+        <p>Predicts dangerous road zones before you reach them using real accident data</p>
+      </div>
+      <div class="feature-card">
+        <h3>Live Tracking</h3>
+        <p>Real time ambulance location shared with family from dispatch to hospital</p>
+      </div>
+      <div class="feature-card">
+        <h3>Hospital Pre-Alert</h3>
+        <p>Hospital notified with patient details before ambulance even arrives</p>
+      </div>
+      <div class="feature-card">
+        <h3>City Safety Dashboard</h3>
+        <p>Authorities monitor accident hotspots and deploy resources proactively</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <h3>Suraksh<span>AI</span></h3>
+    <p>Protecting every Indian, on every road, every single day.</p>
+    <p>contact@suraksh.ai</p>
+  </footer>
+
   <script src="script.js"></script>
-  </body>
+</body>
 </html>
-
- 

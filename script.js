@@ -162,4 +162,5 @@ window.addEventListener("scroll", function() {
   } else {
     nav.classList.remove("scrolled")
   }
-})
+}}
+// frontend ends

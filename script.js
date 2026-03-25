@@ -164,3 +164,4 @@ window.addEventListener("scroll", function() {
   }
 }}
 // frontend ends
+// frontend ends day 2 

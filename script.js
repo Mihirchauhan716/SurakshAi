@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", function() {
   let autoTimer = null
   let etaInterval = null
 
+  if (!demoButton || !demoOverlay || !demoCloseBtn) {
+    return
+  }
+
   // CLOSE
   demoCloseBtn.addEventListener("click", function() {
     closeDemo()
@@ -162,7 +166,7 @@ window.addEventListener("scroll", function() {
   } else {
     nav.classList.remove("scrolled")
   }
-}}
+})
 // frontend ends
 // frontend ends day 2 
 // frontend day 3 , antigravtiy day 1

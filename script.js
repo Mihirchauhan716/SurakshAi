@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".phone-screen").forEach(function (s) {
       s.classList.add("hidden")
+      s.classList.remove("active")
     })
     document.querySelectorAll(".step-info").forEach(function (s) {
       s.classList.add("hidden")
@@ -40,7 +41,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let phoneEl = document.getElementById("phoneStep" + step)
     let infoEl = document.getElementById("infoStep" + step)
-    if (phoneEl) phoneEl.classList.remove("hidden")
+    if (phoneEl) {
+      phoneEl.classList.remove("hidden")
+      requestAnimationFrame(function () {
+        phoneEl.classList.add("active")
+      })
+    }
     if (infoEl) infoEl.classList.remove("hidden")
 
     document.getElementById("demoStepIndicator").textContent = "Step " + step + " of 5"
@@ -88,15 +94,53 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 9000)  // 9 seconds per step
   }
 
-  demoButton.addEventListener("click", function () {
+  function triggerFlash() {
+    document.body.classList.add("flash-active")
 
-    // SCREEN FLASH
-    document.body.style.backgroundColor = "#ff0000"
-    setTimeout(function () { document.body.style.backgroundColor = "#080808" }, 150)
-    setTimeout(function () { document.body.style.backgroundColor = "#ff0000" }, 300)
-    setTimeout(function () { document.body.style.backgroundColor = "#080808" }, 450)
-    setTimeout(function () { document.body.style.backgroundColor = "#ff0000" }, 600)
-    setTimeout(function () { document.body.style.backgroundColor = "#080808" }, 750)
+    setTimeout(() => {
+      document.body.classList.remove("flash-active")
+    }, 600)
+  }
+
+  demoButton.addEventListener("click", function () {
+    // ── ADD THIS AT TOP ──
+    let data = getSensorData()
+    let score = decisionEngine(data)
+    let banner = document.getElementById("emergencyBanner")
+
+    if (score >= 70) {
+      banner.style.display = "block"
+      banner.textContent = " ACCIDENT DETECTED"
+      banner.classList.add("active")
+    }
+    else if (score >= 40) {
+      banner.style.display = "block"
+      banner.textContent = " POSSIBLE INCIDENT"
+      banner.classList.add("active")
+    }
+    else {
+      banner.style.display = "none"
+      banner.classList.remove("active")
+    }
+
+    if (score >= 70) {
+      document.body.style.filter = "brightness(0.9) saturate(1.2)"
+      document.body.classList.add("emergency-mode")
+    } else {
+      document.body.style.filter = "none"
+      document.body.classList.remove("emergency-mode")
+    }
+
+    console.log("Sensor:", data)
+    console.log("Score:", score)
+
+    console.log("System Status:",
+      score >= 70 ? "Accident Detected" :
+      score >= 40 ? "Monitoring..." :
+      "System Normal"
+    )
+
+    triggerFlash()
 
     setTimeout(function () {
       goToStep(1)
@@ -171,3 +215,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
   elements.forEach(el => observer.observe(el));
 });
+// ── SENSOR SIMULATION ──
+function getSensorData() {
+  return {
+    speed: Math.floor(Math.random() * 80),
+    force: parseFloat((Math.random() * 5).toFixed(2))
+  }
+}
+
+// ── DECISION ENGINE ──
+function decisionEngine(data) {
+  let score = 0
+
+  if (data.force > 3) score += 50
+  if (data.force > 4) score += 20
+  if (data.speed < 10) score += 20
+  if (data.speed === 0) score += 10
+
+  return score
+}
+
+// ── TEST ──
+let test = getSensorData()
+let score = decisionEngine(test)
+
+console.log("Sensor:", test)
+console.log("Score:", score)

@@ -12,29 +12,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ── EMERGENCY BANNER ── */
-#emergencyBanner {
-  display: none;
-  background-color: #cc0000;
-  color: white;
-  text-align: center;
-  padding: 14px;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 9999;
-  transform: translateY(-100%);
-  transition: all 0.4s ease;
-}
-
-#emergencyBanner.active {
-  transform: translateY(0);
-}
-
 .flash-active {
   animation: cinematicFlash 0.6s ease;
 }
@@ -135,7 +112,8 @@ nav a:hover {
 
 /* ── HERO ── */
 .hero {
-  min-height: 100vh;
+  min-height: auto;
+  padding: 80px 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -144,18 +122,28 @@ nav a:hover {
   padding: 140px 40px 100px;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 60%, #2a0f00 0%, #080808 60%);
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  background:
+    radial-gradient(ellipse at 50% 60%, #2a0f00 0%, #080808 60%),
+    linear-gradient(rgba(255, 102, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 102, 0, 0.05) 1px, transparent 1px);
+  background-size: auto, 60px 60px, 60px 60px;
+  background-position: center, center, center;
+  transition: background-position 0.2s ease, background 0.2s ease;
 }
 
 .hero::before {
-  content: '';
+  content: "";
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 102, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 102, 0, 0.05) 1px, transparent 1px);
-  background-size: 60px 60px;
+  top: var(--mouse-y);
+  left: var(--mouse-x);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,115,0,0.25) 0%, transparent 70%);
   pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: all 0.15s ease;
 }
 
 .hero::after {
@@ -167,6 +155,11 @@ nav a:hover {
   height: 200px;
   background: linear-gradient(transparent, #080808);
   pointer-events: none;
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 .circle {
@@ -734,9 +727,12 @@ footer p {
   display: none;
   position: fixed;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  overflow: hidden;
   background-color: #080808;
   z-index: 99999;
   flex-direction: column;
@@ -806,6 +802,7 @@ footer p {
   display: flex;
   flex: 1;
   height: calc(100vh - 56px);
+  max-height: calc(100vh - 56px);
   overflow: hidden;
 }
 

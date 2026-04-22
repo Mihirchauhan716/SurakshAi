@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function closeDemo() {
     demoOverlay.style.display = "none"
+    demoOverlay.style.filter = "none"
+    demoOverlay.classList.remove("emergency-mode")
+    document.body.style.overflow = ""
     clearTimeout(autoTimer)
     clearInterval(etaInterval)
     goToStep(1)
@@ -106,29 +109,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // ── ADD THIS AT TOP ──
     let data = getSensorData()
     let score = decisionEngine(data)
-    let banner = document.getElementById("emergencyBanner")
-
     if (score >= 70) {
-      banner.style.display = "block"
-      banner.textContent = " ACCIDENT DETECTED"
-      banner.classList.add("active")
-    }
-    else if (score >= 40) {
-      banner.style.display = "block"
-      banner.textContent = " POSSIBLE INCIDENT"
-      banner.classList.add("active")
-    }
-    else {
-      banner.style.display = "none"
-      banner.classList.remove("active")
-    }
-
-    if (score >= 70) {
-      document.body.style.filter = "brightness(0.9) saturate(1.2)"
-      document.body.classList.add("emergency-mode")
+      demoOverlay.style.filter = "brightness(0.9) saturate(1.2)"
+      demoOverlay.classList.add("emergency-mode")
     } else {
-      document.body.style.filter = "none"
-      document.body.classList.remove("emergency-mode")
+      demoOverlay.style.filter = "none"
+      demoOverlay.classList.remove("emergency-mode")
     }
 
     console.log("Sensor:", data)
@@ -145,21 +131,17 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
       goToStep(1)
       demoOverlay.style.display = "flex"
+      document.body.style.overflow = "hidden"
       autoAdvance()
     }, 300)
-  })
-})
-// ── HIDE EMERGENCY BANNER BY DEFAULT ──
-document.addEventListener("DOMContentLoaded", function () {
-
-  document.getElementById("emergencyBanner").style.display = "none"
-
 
 })
 
 
 
 // ── COUNTER ANIMATION ──
+})
+
 function animateCounter(el, target, suffix) {
   let start = 0
   let duration = 800
@@ -216,6 +198,54 @@ document.addEventListener("DOMContentLoaded", function () {
   elements.forEach(el => observer.observe(el));
 });
 // ── SENSOR SIMULATION ──
+document.addEventListener("DOMContentLoaded", function () {
+  const hero = document.querySelector(".hero")
+
+  if (!hero) {
+    return
+  }
+
+  hero.addEventListener("mousemove", function (e) {
+    const rect = hero.getBoundingClientRect()
+    const localX = e.clientX - rect.left
+    const localY = e.clientY - rect.top
+    const x = (e.clientX / window.innerWidth - 0.5) * 20
+    const y = (e.clientY / window.innerHeight - 0.5) * 20
+
+    hero.style.setProperty("--mouse-x", localX + "px")
+    hero.style.setProperty("--mouse-y", localY + "px")
+    hero.style.setProperty(
+      "background",
+      `radial-gradient(circle at ${localX}px ${localY}px, rgba(255,115,0,0.08), transparent 40%), radial-gradient(ellipse at 50% 60%, #2a0f00 0%, #080808 60%), linear-gradient(rgba(255, 102, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 102, 0, 0.05) 1px, transparent 1px)`
+    )
+    hero.style.backgroundSize = "auto, auto, 60px 60px, 60px 60px"
+    hero.style.backgroundPosition = `center, center, ${50 + x}% ${50 + y}%, ${50 + x}% ${50 + y}%`
+  })
+
+  hero.addEventListener("mouseleave", function () {
+    hero.style.setProperty("--mouse-x", "50%")
+    hero.style.setProperty("--mouse-y", "50%")
+    hero.style.background =
+      "radial-gradient(ellipse at 50% 60%, #2a0f00 0%, #080808 60%), linear-gradient(rgba(255, 102, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 102, 0, 0.05) 1px, transparent 1px)"
+    hero.style.backgroundSize = "auto, 60px 60px, 60px 60px"
+    hero.style.backgroundPosition = "center, center, center"
+  })
+
+  document.querySelectorAll(".hero button").forEach(function (btn) {
+    btn.addEventListener("mousemove", function (e) {
+      const rect = btn.getBoundingClientRect()
+      const x = e.clientX - rect.left - rect.width / 2
+      const y = e.clientY - rect.top - rect.height / 2
+
+      btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`
+    })
+
+    btn.addEventListener("mouseleave", function () {
+      btn.style.transform = "translate(0,0)"
+    })
+  })
+});
+
 function getSensorData() {
   return {
     speed: Math.floor(Math.random() * 80),

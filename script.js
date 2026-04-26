@@ -1,18 +1,22 @@
+import { processEmergency } from "./system/engine.js"
+
 document.addEventListener("DOMContentLoaded", function () {
 
   let demoButton = document.getElementById("demoButton")
   let demoOverlay = document.getElementById("demoOverlay")
-  let demoCloseBtn = document.getElementById("demoCloseBtn")
+  let overlayClose = document.getElementById("overlay-close")
+  let aiHUD = document.getElementById("aiHUD")
+  let aiLines = document.getElementById("aiLines")
   let currentStep = 1
   let autoTimer = null
   let etaInterval = null
 
-  if (!demoButton || !demoOverlay || !demoCloseBtn) {
+  if (!demoButton || !demoOverlay || !overlayClose) {
     return
   }
 
   // CLOSE
-  demoCloseBtn.addEventListener("click", function () {
+  overlayClose.addEventListener("click", function () {
     closeDemo()
   })
 
@@ -20,10 +24,15 @@ document.addEventListener("DOMContentLoaded", function () {
     demoOverlay.style.display = "none"
     demoOverlay.style.filter = "none"
     demoOverlay.classList.remove("emergency-mode")
+    if (aiHUD) aiHUD.classList.remove("show")
+    if (aiLines) aiLines.innerHTML = ""
     document.body.style.overflow = ""
     clearTimeout(autoTimer)
     clearInterval(etaInterval)
-    goToStep(1)
+    goToStep(0)
+
+    const status = document.getElementById("ai-status")
+    if (status) status.style.display = "none"
   }
 
   // SHOW STEP
@@ -105,11 +114,87 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 600)
   }
 
+  function showAIHUD(result, onDone) {
+    const hud = document.getElementById("aiHUD")
+    const linesEl = document.getElementById("aiLines")
+
+    if (!hud || !linesEl) {
+      if (onDone) onDone()
+      return
+    }
+
+    const lines = [
+      "Speed: " + result.data.speed + " km/h",
+      "Impact Force: " + result.data.force + " g",
+      "Risk Level: " + result.risk,
+      "Score: " + result.score,
+      "Reasons: " + result.reasons.join(", ")
+    ]
+
+    linesEl.innerHTML = ""
+    hud.classList.add("show")
+
+    let i = 0
+
+    function typeLine(text, cb) {
+      const div = document.createElement("div")
+      div.className = "ai-line ai-cursor"
+      linesEl.appendChild(div)
+
+      let idx = 0
+      const interval = setInterval(function () {
+        div.textContent = text.slice(0, idx++)
+        if (idx > text.length) {
+          clearInterval(interval)
+          div.classList.remove("ai-cursor")
+          cb()
+        }
+      }, 30)
+    }
+
+    function next() {
+      if (i >= lines.length) {
+        setTimeout(function () {
+          hud.classList.remove("show")
+          if (onDone) onDone()
+        }, 1000)
+        return
+      }
+
+      typeLine(lines[i++], function () {
+        setTimeout(next, 250)
+      })
+    }
+
+    next()
+  }
+
   demoButton.addEventListener("click", function () {
-    // ── ADD THIS AT TOP ──
-    let data = getSensorData()
-    let score = decisionEngine(data)
-    if (score >= 70) {
+    const result = processEmergency()
+    const status = document.getElementById("ai-status")
+    const text = document.getElementById("ai-text")
+
+    if (status && text) {
+      status.style.display = "block"
+
+      if (result.risk === "HIGH") {
+        text.textContent = "AI: HIGH RISK DETECTED"
+        text.style.color = "#ff4d4d"
+      } else if (result.risk === "MEDIUM") {
+        text.textContent = "AI: ANALYZING SITUATION"
+        text.style.color = "#ffaa00"
+      } else {
+        text.textContent = "AI: SYSTEM NORMAL"
+        text.style.color = "#4caf50"
+      }
+    }
+
+    console.log("=== SURAKSHAI ENGINE ===")
+    console.log("Speed:", result.data.speed, "km/h")
+    console.log("Force:", result.data.force, "g")
+    console.log("Risk:", result.risk)
+
+    if (result.score >= 70) {
       demoOverlay.style.filter = "brightness(0.9) saturate(1.2)"
       demoOverlay.classList.add("emergency-mode")
     } else {
@@ -117,21 +202,13 @@ document.addEventListener("DOMContentLoaded", function () {
       demoOverlay.classList.remove("emergency-mode")
     }
 
-    console.log("Sensor:", data)
-    console.log("Score:", score)
-
-    console.log("System Status:",
-      score >= 70 ? "Accident Detected" :
-      score >= 40 ? "Monitoring..." :
-      "System Normal"
-    )
+    document.body.style.overflow = "hidden"
 
     triggerFlash()
 
     setTimeout(function () {
       goToStep(1)
       demoOverlay.style.display = "flex"
-      document.body.style.overflow = "hidden"
       autoAdvance()
     }, 300)
 
@@ -198,6 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
   elements.forEach(el => observer.observe(el));
 });
 // ── SENSOR SIMULATION ──
+
 document.addEventListener("DOMContentLoaded", function () {
   const hero = document.querySelector(".hero")
 
@@ -246,28 +324,3 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 });
 
-function getSensorData() {
-  return {
-    speed: Math.floor(Math.random() * 80),
-    force: parseFloat((Math.random() * 5).toFixed(2))
-  }
-}
-
-// ── DECISION ENGINE ──
-function decisionEngine(data) {
-  let score = 0
-
-  if (data.force > 3) score += 50
-  if (data.force > 4) score += 20
-  if (data.speed < 10) score += 20
-  if (data.speed === 0) score += 10
-
-  return score
-}
-
-// ── TEST ──
-let test = getSensorData()
-let score = decisionEngine(test)
-
-console.log("Sensor:", test)
-console.log("Score:", score)

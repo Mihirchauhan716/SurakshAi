@@ -9,6 +9,13 @@
 
 <body>
 
+  <div id="aiHUD" class="ai-hud">
+    <div>
+      <div class="ai-title">SURAKSHAI ANALYSIS</div>
+      <div id="aiLines" class="ai-lines"></div>
+    </div>
+  </div>
+
   <!-- DEMO OVERLAY -->
   <div id="demoOverlay">
     <div id="systemStatus" class="status-text"></div>
@@ -23,7 +30,10 @@
         <span id="demoStepIndicator">Step 1 of 5</span>
       </div>
       <div id="demoTopRight">
-        <span id="demoCloseBtn">✕</span>
+        <div id="ai-status">
+          <span id="ai-text"></span>
+        </div>
+        <span id="overlay-close">&times;</span>
       </div>
     </div>
 
@@ -387,7 +397,7 @@
     <p>contact@suraksh.ai</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 
 </html>

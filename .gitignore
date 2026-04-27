@@ -1,0 +1,26 @@
+# Python (no longer used)
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# Temporary & Cache Files
+.tmp/
+.cache/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE (optional - keep for team development)
+.vscode/
+.idea/
+
+# Node (if using npm in future)
+node_modules/
+package-lock.json

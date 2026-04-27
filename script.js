@@ -1,5 +1,3 @@
-import { processEmergency } from "./system/engine.js"
-
 document.addEventListener("DOMContentLoaded", function () {
 
   let demoButton = document.getElementById("demoButton")
@@ -7,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let overlayClose = document.getElementById("overlay-close")
   let aiHUD = document.getElementById("aiHUD")
   let aiLines = document.getElementById("aiLines")
+  let systemStatus = document.getElementById("systemStatus")
   let currentStep = 1
   let autoTimer = null
   let etaInterval = null
@@ -30,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
     clearTimeout(autoTimer)
     clearInterval(etaInterval)
     goToStep(0)
+    if (systemStatus) systemStatus.textContent = ""
 
     const status = document.getElementById("ai-status")
     if (status) status.style.display = "none"
@@ -61,7 +61,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     if (infoEl) infoEl.classList.remove("hidden")
 
-    document.getElementById("demoStepIndicator").textContent = "Step " + step + " of 5"
+    const stepIndicator = document.getElementById("demoStepIndicator")
+    if (stepIndicator) {
+      stepIndicator.textContent = "Step " + step + " of 5"
+    }
 
     // animate points one by one
     if (infoEl) {
@@ -82,13 +85,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function startETA() {
     let seconds = 180
-    document.getElementById("phoneEta").textContent = "3:00"
+    const etaEl = document.getElementById("phoneEta")
+    if (etaEl) etaEl.textContent = "3:00"
     etaInterval = setInterval(function () {
       seconds--
       let min = Math.floor(seconds / 60)
       let sec = seconds % 60
-      let el = document.getElementById("phoneEta")
-      if (el) el.textContent = min + ":" + (sec < 10 ? "0" + sec : sec)
+      if (etaEl) etaEl.textContent = min + ":" + (sec < 10 ? "0" + sec : sec)
       if (seconds <= 0) clearInterval(etaInterval)
     }, 1000)
   }
@@ -127,8 +130,11 @@ document.addEventListener("DOMContentLoaded", function () {
       "Speed: " + result.data.speed + " km/h",
       "Impact Force: " + result.data.force + " g",
       "Risk Level: " + result.risk,
-      "Score: " + result.score,
-      "Reasons: " + result.reasons.join(", ")
+      "Confidence: " + result.confidence + "%",
+      "Prediction Source: " + result.source,
+      "",
+      "Analysis: " + result.analysis,
+      "Inference: " + result.inference
     ]
 
     linesEl.innerHTML = ""
@@ -149,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
           div.classList.remove("ai-cursor")
           cb()
         }
-      }, 30)
+      }, 50)
     }
 
     function next() {
@@ -162,57 +168,109 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       typeLine(lines[i++], function () {
-        setTimeout(next, 250)
+        setTimeout(next, 400)
       })
     }
 
     next()
   }
 
+  function updateDemoMetrics(result) {
+    const alertSubs = document.querySelectorAll("#phoneStep2 .alert-sub")
+    const speedValue = document.querySelector("#phoneStep2 .stat-value.red")
+    const impactValue = document.querySelectorAll("#phoneStep2 .stat-value.red")[1]
+    const infoPoints = document.querySelectorAll("#infoStep2 .step-point")
+
+    if (alertSubs[0]) {
+      alertSubs[0].textContent = "Impact: " + result.data.force + "g predictive force"
+    }
+    if (alertSubs[1]) {
+      alertSubs[1].textContent = "Confidence: " + result.confidence + "%"
+    }
+    if (speedValue) {
+      speedValue.textContent = result.data.speed + " km/h"
+    }
+    if (impactValue) {
+      impactValue.textContent = result.risk
+    }
+    if (infoPoints[0]) {
+      infoPoints[0].textContent = result.data.force + "g impact signal detected"
+    }
+    if (infoPoints[1]) {
+      infoPoints[1].textContent = "Vehicle speed reduced to " + result.data.speed + " km/h"
+    }
+    if (infoPoints[2]) {
+      infoPoints[2].textContent = "AI confidence: " + result.confidence + "%"
+    }
+  }
+
   demoButton.addEventListener("click", function () {
-    const result = processEmergency()
-    const status = document.getElementById("ai-status")
-    const text = document.getElementById("ai-text")
+    try {
+      const data = window.generateDemoSensorData()
+      const result = window.getPrediction(data)
 
-    if (status && text) {
-      status.style.display = "block"
+      // Compute analysis and inference
+      let analysis = ""
+      let inference = ""
 
-      if (result.risk === "HIGH") {
-        text.textContent = "AI: HIGH RISK DETECTED"
-        text.style.color = "#ff4d4d"
+      if (data.force > 4 && data.speed < 5) {
+        analysis = "High impact detected despite low speed"
+        inference = "Possible collision, drop, or sudden external force"
+      } else if (result.risk === "HIGH") {
+        analysis = "Multiple risk factors exceeded safe thresholds"
+        inference = "Potential hazardous movement detected"
       } else if (result.risk === "MEDIUM") {
-        text.textContent = "AI: ANALYZING SITUATION"
-        text.style.color = "#ffaa00"
+        analysis = "Moderate instability detected"
+        inference = "Conditions may lead to risk if continued"
       } else {
-        text.textContent = "AI: SYSTEM NORMAL"
-        text.style.color = "#4caf50"
+        analysis = "All parameters within safe range"
+        inference = "No immediate risk detected"
       }
+
+      result.analysis = analysis
+      result.inference = inference
+
+      const status = document.getElementById("ai-status")
+      const text = document.getElementById("ai-text")
+
+      if (status && text) {
+        status.style.display = "block"
+        text.textContent = result.risk + " RISK | " + result.confidence + "% | " + result.source
+        text.style.color =
+          result.risk === "HIGH" ? "#ff4d4d" :
+          result.risk === "MEDIUM" ? "#ffaa00" :
+          "#4caf50"
+      }
+
+      if (systemStatus) {
+        systemStatus.textContent = "Risk " + result.risk + " | Confidence " + result.confidence + "% | " + result.source
+      }
+
+      updateDemoMetrics(result)
+
+      if (result.confidence >= 70) {
+        demoOverlay.style.filter = "brightness(0.9) saturate(1.2)"
+        demoOverlay.classList.add("emergency-mode")
+      } else {
+        demoOverlay.style.filter = "none"
+        demoOverlay.classList.remove("emergency-mode")
+      }
+
+      document.body.style.overflow = "hidden"
+
+      triggerFlash()
+
+      setTimeout(function () {
+        showAIHUD(result, function () {
+          goToStep(1)
+          demoOverlay.style.display = "flex"
+          autoAdvance()
+        })
+      }, 300)
+    } catch (error) {
+      console.error("Error in demo button handler:", error)
     }
-
-    console.log("=== SURAKSHAI ENGINE ===")
-    console.log("Speed:", result.data.speed, "km/h")
-    console.log("Force:", result.data.force, "g")
-    console.log("Risk:", result.risk)
-
-    if (result.score >= 70) {
-      demoOverlay.style.filter = "brightness(0.9) saturate(1.2)"
-      demoOverlay.classList.add("emergency-mode")
-    } else {
-      demoOverlay.style.filter = "none"
-      demoOverlay.classList.remove("emergency-mode")
-    }
-
-    document.body.style.overflow = "hidden"
-
-    triggerFlash()
-
-    setTimeout(function () {
-      goToStep(1)
-      demoOverlay.style.display = "flex"
-      autoAdvance()
-    }, 300)
-
-})
+  })
 
 
 

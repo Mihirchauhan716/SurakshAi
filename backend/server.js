@@ -20,7 +20,7 @@ app.post("/analyze", async (req, res) => {
 
   if (force > 4) {
     risk = "HIGH";
-    analysis = "High impact detected despite speed";
+    analysis = "High impact detected despite low speed";
     inference = "Possible collision, drop, or sudden external force";
   } else if (speed > 40 && force > 2) {
     risk = "MEDIUM";
@@ -36,7 +36,7 @@ app.post("/analyze", async (req, res) => {
     speed: speed + " km/h",
     force: force + " g",
     risk,
-    confidence: confidence + "%",
+    confidence: confidence,
     analysis,
     inference,
     source: "Simulated AI Engine"

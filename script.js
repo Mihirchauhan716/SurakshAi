@@ -128,16 +128,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const lines = [
       "Input Data:",
-      "Speed: " + result.data.speed + " km/h",
-      "Impact Force: " + result.data.force + " g",
+      "Speed: " + result.speed,
+      "Impact Force: " + result.force,
       "",
       "--- AI ANALYSIS ---",
       "Analysis: " + result.analysis,
       "Inference: " + result.inference,
       "",
       "Risk Level: " + result.risk,
-      "Confidence: " + result.confidence + "%",
-      "Prediction Source: Rule-based ML Simulation"
+      "Confidence: " + result.confidence,
+      "Prediction Source: " + result.source
     ]
 
     linesEl.innerHTML = ""
@@ -185,25 +185,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const infoPoints = document.querySelectorAll("#infoStep2 .step-point")
 
     if (alertSubs[0]) {
-      alertSubs[0].textContent = "Impact: " + result.data.force + "g predictive force"
+      alertSubs[0].textContent = "Impact: " + result.force + "g predictive force"
     }
     if (alertSubs[1]) {
-      alertSubs[1].textContent = "Confidence: " + result.confidence + "%"
+      alertSubs[1].textContent = "Confidence: " + result.confidence
     }
     if (speedValue) {
-      speedValue.textContent = result.data.speed + " km/h"
+      speedValue.textContent = result.speed
     }
     if (impactValue) {
       impactValue.textContent = result.risk
     }
     if (infoPoints[0]) {
-      infoPoints[0].textContent = result.data.force + "g impact signal detected"
+      infoPoints[0].textContent = result.force + "g impact signal detected"
     }
     if (infoPoints[1]) {
-      infoPoints[1].textContent = "Vehicle speed reduced to " + result.data.speed + " km/h"
+      infoPoints[1].textContent = "Vehicle speed reduced to " + result.speed
     }
     if (infoPoints[2]) {
-      infoPoints[2].textContent = "AI confidence: " + result.confidence + "%"
+      infoPoints[2].textContent = "AI confidence: " + result.confidence
     }
   }
 
@@ -212,10 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = window.generateDemoSensorData()
       const result = window.getPrediction(data)
 
-      // Fetch analysis and inference from Gemini API
-      let analysis = "Analysis unavailable"
-      let inference = "Inference unavailable"
-
+      // Fetch analysis and inference from backend API
       try {
         const response = await fetch("http://localhost:3000/analyze", {
           method: "POST",
@@ -228,25 +225,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (response.ok) {
           const apiData = await response.json()
-          const lines = apiData.text.split("\n").map(line => line.trim()).filter(line => line)
-          if (lines.length >= 2) {
-            analysis = lines[0].replace("Analysis:", "").trim()
-            inference = lines[1].replace("Inference:", "").trim()
-          }
+          result.analysis = apiData.analysis
+          result.inference = apiData.inference
+          result.risk = apiData.risk
+          result.confidence = apiData.confidence
+          result.speed = apiData.speed
+          result.force = apiData.force
         }
       } catch (apiError) {
         console.warn("API call failed, using fallback:", apiError)
       }
-
-      result.analysis = analysis
-      result.inference = inference
 
       const status = document.getElementById("ai-status")
       const text = document.getElementById("ai-text")
 
       if (status && text) {
         status.style.display = "block"
-        text.textContent = result.risk + " RISK | " + result.confidence + "% | " + result.source
+        const confidenceDisplay = result.confidence.toString().includes("%") ? result.confidence : result.confidence + "%"
+        text.textContent = result.risk + " RISK | " + confidenceDisplay + " | " + result.source
         text.style.color =
           result.risk === "HIGH" ? "#ff4d4d" :
           result.risk === "MEDIUM" ? "#ffaa00" :
@@ -254,7 +250,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (systemStatus) {
-        systemStatus.textContent = "Risk " + result.risk + " | Confidence " + result.confidence + "% | " + result.source
+        const confidenceDisplay = result.confidence.toString().includes("%") ? result.confidence : result.confidence + "%"
+        systemStatus.textContent = "Risk " + result.risk + " | Confidence " + confidenceDisplay + " | " + result.source
       }
 
       updateDemoMetrics(result)

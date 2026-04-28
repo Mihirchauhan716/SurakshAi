@@ -127,11 +127,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const lines = [
+      "Input Data:",
       "Speed: " + result.data.speed + " km/h",
       "Impact Force: " + result.data.force + " g",
+      "",
       "Risk Level: " + result.risk,
       "Confidence: " + result.confidence + "%",
-      "Prediction Source: " + result.source,
+      "Prediction Source: Rule-based ML Simulation",
       "",
       "Analysis: " + result.analysis,
       "Inference: " + result.inference

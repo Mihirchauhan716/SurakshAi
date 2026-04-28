@@ -207,27 +207,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  demoButton.addEventListener("click", function () {
+  demoButton.addEventListener("click", async function () {
     try {
       const data = window.generateDemoSensorData()
       const result = window.getPrediction(data)
 
-      // Compute analysis and inference
-      let analysis = ""
-      let inference = ""
+      // Fetch analysis and inference from Gemini API
+      let analysis = "Analysis unavailable"
+      let inference = "Inference unavailable"
 
-      if (data.force > 4 && data.speed < 5) {
-        analysis = "High impact force detected despite minimal movement, indicating an abnormal event"
-        inference = "Likely collision or device drop based on abnormal force pattern"
-      } else if (result.risk === "HIGH") {
-        analysis = "Multiple risk factors exceeded safe thresholds"
-        inference = "Potential hazardous movement detected"
-      } else if (result.risk === "MEDIUM") {
-        analysis = "Moderate instability detected"
-        inference = "Conditions may lead to risk if continued"
-      } else {
-        analysis = "All parameters within safe range"
-        inference = "No immediate risk detected"
+      try {
+        const response = await fetch("http://localhost:3000/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            speed: result.data.speed,
+            force: result.data.force
+          })
+        })
+
+        if (response.ok) {
+          const apiData = await response.json()
+          const lines = apiData.text.split("\n").map(line => line.trim()).filter(line => line)
+          if (lines.length >= 2) {
+            analysis = lines[0].replace("Analysis:", "").trim()
+            inference = lines[1].replace("Inference:", "").trim()
+          }
+        }
+      } catch (apiError) {
+        console.warn("API call failed, using fallback:", apiError)
       }
 
       result.analysis = analysis

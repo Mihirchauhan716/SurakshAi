@@ -131,12 +131,12 @@ document.addEventListener("DOMContentLoaded", function () {
       "Speed: " + result.data.speed + " km/h",
       "Impact Force: " + result.data.force + " g",
       "",
+      "Analysis: " + result.analysis,
+      "Inference: " + result.inference,
+      "",
       "Risk Level: " + result.risk,
       "Confidence: " + result.confidence + "%",
-      "Prediction Source: Rule-based ML Simulation",
-      "",
-      "Analysis: " + result.analysis,
-      "Inference: " + result.inference
+      "Prediction Source: Rule-based ML Simulation"
     ]
 
     linesEl.innerHTML = ""

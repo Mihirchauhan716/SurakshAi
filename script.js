@@ -131,6 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "Speed: " + result.data.speed + " km/h",
       "Impact Force: " + result.data.force + " g",
       "",
+      "--- AI ANALYSIS ---",
       "Analysis: " + result.analysis,
       "Inference: " + result.inference,
       "",
@@ -216,8 +217,8 @@ document.addEventListener("DOMContentLoaded", function () {
       let inference = ""
 
       if (data.force > 4 && data.speed < 5) {
-        analysis = "High impact detected despite low speed"
-        inference = "Possible collision, drop, or sudden external force"
+        analysis = "High impact force detected despite minimal movement, indicating an abnormal event"
+        inference = "Likely collision or device drop based on abnormal force pattern"
       } else if (result.risk === "HIGH") {
         analysis = "Multiple risk factors exceeded safe thresholds"
         inference = "Potential hazardous movement detected"
